@@ -1,0 +1,30 @@
+volumes:
+  postgres_data:
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go-app
+    volumes:
+      - .:/api
+    ports:
+      - "8008:8008"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:12.21
+    container_name: go-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+      TZ: Asia/Tokyo
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
